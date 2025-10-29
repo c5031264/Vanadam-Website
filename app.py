@@ -17,6 +17,18 @@ def index():
 def mapPage(mapName):
     print(f'got request for: {mapName}')
     return render_template(f'{mapName}.html', mapName=mapName)
+@app.route('login', methods=['GET'])
+def login():
+    pass
+@app.route('logout')
+def logout():
+    pass
+@app.route('register', methods=['GET', 'POST'])
+def register():
+    pass
+@app.route('report', methods=['POST'])
+def report():
+    pass
 
 # Run application
 #=========================================================
