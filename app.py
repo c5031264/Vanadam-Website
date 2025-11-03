@@ -21,11 +21,9 @@ csrf = CSRFProtect(app)
 #hash object
 hash = hashlib.sha256()
 
-
 #Get DB instance per request, to avoid cross thread errors with db cursor
 def get_database():
     if 'db' not in g:
-
         dbpath = "database.db"
         if os.path.exists(dbpath):
             g.db = sqlite3.connect("database.db")
@@ -191,8 +189,8 @@ def register():
 def report():
     pass
 
-@app.route('/videos', methods=['GET, POST'])
-def videoSearch(criteria):
+@app.route('/search', methods=['GET, POST'])
+def search(criteria):
     pass
 
 @app.route('/videos/<videoID>', methods=['GET'])
