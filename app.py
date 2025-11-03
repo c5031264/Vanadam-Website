@@ -1,6 +1,6 @@
 # This code imports the Flask library and some functions from it.
 import flask
-from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, g
 from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm, CSRFProtect
 
@@ -11,26 +11,35 @@ from dbconstructor import create_database
 
 from HaloData import HI_MAPS
 
-#
-hash = hashlib.sha256()
-dbpath = "database.db"
-if os.path.exists(dbpath):
-    conn = sqlite3.connect("database.db")
-    print("Connected to database!")
-else:
-    print("Database doesn't exist, constructing...")
-    create_database()
-    conn = sqlite3.connect("database.db")
-#Create a cursor for db interaction
-cur = conn.cursor()
-
-
 # Create a Flask application instance
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_key_for_testing_only")
 
 #cross site protection
 csrf = CSRFProtect(app)
+#hash object
+hash = hashlib.sha256()
+
+
+#Get DB instance per request, to avoid cross thread errors with db cursor
+def get_database():
+    if 'db' not in g:
+
+        dbpath = "database.db"
+        if os.path.exists(dbpath):
+            g.db = sqlite3.connect("database.db")
+            print("Connected to database!")
+            return g.db
+        else:
+            print("Database doesn't exist, constructing...")
+            create_database()
+            conn = sqlite3.connect("database.db")
+
+@app.teardown_appcontext
+def close_db(exception):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 #Construct user validation and registration form classes
 class LoginForm(FlaskForm):
@@ -73,7 +82,7 @@ class RegisterForm(FlaskForm):
                                 )
                             ])
 
-    passwordConfirm = PasswordField('Password2',
+    password2 = PasswordField('Confirm Password',
                             validators= [
                                 DataRequired(),
                                 EqualTo('password', message="Passwords must match.")
@@ -93,7 +102,9 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():  # Checks that submitted login form adheres to input validation rules
+    db = get_database()
+    cur = db.cursor()
+    if form.validate_on_submit:  # Checks that submitted login form adheres to input validation rules
         username = form.username.data
         password = form.password.data
 
@@ -130,13 +141,16 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm
+    form = RegisterForm()
+    #Create db cconnection 
+    db = get_database()
+    cur = db.cursor()
+
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
 
-        # Check if username or email already exist
         query = "SELECT * FROM users WHERE username = ? OR email = ?"
         cur.execute(query, (username, email))
         existing_user = cur.fetchone()
@@ -145,13 +159,15 @@ def register():
             hashpass = hashlib.sha256(password.encode()).hexdigest()
             cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
                         (username, email, hashpass))
-            conn.commit()
-            flask.flash("Registration Successful", "success")
+            db.commit()
+            flash("Registration Successful", "success")
             return redirect(url_for('login'))
-        elif existing_user:
-            flask.flash("Credentials already taken", "error")
-        return redirect(url_for('register'))
+        else:
+            flash("Credentials already taken", "error")
+            return redirect(url_for('register'))
+
     return render_template('register.html', form=form)
+
             
 
 @app.route('/report', methods=['POST'])
