@@ -102,7 +102,7 @@ def index():
 def article():
     pass
 
-@app.route('info/<infoType>', methods=['GET'])
+@app.route('/info/<infoType>', methods=['GET'])
 def infoPages(infoType):
     # coaching, get involved, etc. not sure if should all have endpoints... (discuss?)
     pass
@@ -153,7 +153,7 @@ def mapPage(mapID):
     return render_template('map.html', map=map_data)
 
 @app.route('/profile/<userID>', methods=['GET', 'PATCH', 'DELETE'])
-def profilePage(userName):
+def profilePage(username):
     pass
 
 @app.route('/register', methods=['GET', 'POST'])
