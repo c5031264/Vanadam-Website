@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm, CSRFProtect
 
 from wtforms import EmailField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
+
 import sqlite3, os, hashlib, base64
 from dbconstructor import create_database
 
@@ -111,9 +112,10 @@ def infoPages(infoType):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+
     db = get_database()
     cur = db.cursor()
-    if form.validate_on_submit:  # Checks that submitted login form adheres to input validation rules
+    if form.validate_on_submit():  # Checks that submitted login form adheres to input validation rules
         username = form.username.data
         password = form.password.data
 
@@ -159,7 +161,7 @@ def profilePage(userName):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    #Create db cconnection 
+    #Create db cconnection
     db = get_database()
     cur = db.cursor()
 

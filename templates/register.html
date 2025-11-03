@@ -9,7 +9,7 @@
 <div id="registration" class="row align-content-center justify-content-center mx-auto my-auto p-1 pb-2">
     <div class="col-12">
     <form method="POST" action="{{ url_for('register') }}">
-        {{ form.hidden_tag }}
+        {{ form.hidden_tag() }}
         <div class="mb-1">
             {{ form.username.label(class="form-label")}}
             {{ form.username(class="form-control") }}
