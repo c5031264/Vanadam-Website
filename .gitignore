@@ -10,3 +10,4 @@ core.py
 
 hallam/*
 __pycache__/*
+/.idea

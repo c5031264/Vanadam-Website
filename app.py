@@ -48,7 +48,7 @@ class RegisterForm(FlaskForm):
 def index():
     return render_template('home.html', title="Vanadam Halo")
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():  # Checks that submitted login form adheres to input validation rules
@@ -68,7 +68,7 @@ def login():
             else:
                 print("Login failed")
 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 
 @app.route('/mapPage/<mapID>', methods=['GET'])
