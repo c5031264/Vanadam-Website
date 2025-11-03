@@ -2,10 +2,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm, CSRFProtect
-from flask_wtf import generate_csrf
 
 from wtforms import EmailField, PasswordField, StringField, SubmitField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, Length, Regexp
 import sqlite3, os, hashlib, base64
 from dbconstructor import create_database
 
