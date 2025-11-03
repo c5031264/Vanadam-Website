@@ -99,6 +99,15 @@ class RegisterForm(FlaskForm):
 def index():
     return render_template('home.html', title="Vanadam Halo")
 
+@app.route('/article', methods=['GET', 'PATCH', 'POST', 'DELETE'])
+def article():
+    pass
+
+@app.route('info/<infoType>', methods=['GET'])
+def infoPages(infoType):
+    # coaching, get involved, etc. not sure if should all have endpoints... (discuss?)
+    pass
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -123,6 +132,14 @@ def login():
 
     return render_template('login.html', form=form)
 
+@app.route('/logout')
+def logout():
+    #pop user from session
+    pass
+
+@app.route('/mapPage', methods=['GET'])
+def mapsAll():
+    return render_template('maps.html')
 
 @app.route('/mapPage/<mapID>', methods=['GET'])
 def mapPage(mapID):
@@ -134,9 +151,9 @@ def mapPage(mapID):
     
     print(map_data)
     return render_template('map.html', map=map_data)
-@app.route('/logout')
-def logout():
-    #pop user from session
+
+@app.route('/profile/<userID>', methods=['GET', 'PATCH', 'DELETE'])
+def profilePage(userName):
     pass
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -167,11 +184,17 @@ def register():
             return redirect(url_for('register'))
 
     return render_template('register.html', form=form)
-
-            
-
+  
 @app.route('/report', methods=['POST'])
 def report():
+    pass
+
+@app.route('/videos', methods=['GET, POST'])
+def videoSearch(criteria):
+    pass
+
+@app.route('/videos/<videoID>', methods=['GET'])
+def video(videoID):
     pass
 
 # Run application
