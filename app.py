@@ -1,4 +1,5 @@
 # This code imports the Flask library and some functions from it.
+import flask
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm, CSRFProtect
@@ -132,9 +133,24 @@ def register():
     form = RegisterForm
     if form.validate_on_submit():
         username = form.username.data
+        email = form.email.data
         password = form.password.data
-        flash('Registration successful!', 'success')
-        return redirect(url_for('login'))
+
+        # Check if username or email already exist
+        query = "SELECT * FROM users WHERE username = ? OR email = ?"
+        cur.execute(query, (username, email))
+        existing_user = cur.fetchone()
+
+        if existing_user is None:
+            hashpass = hashlib.sha256(password.encode()).hexdigest()
+            cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+                        (username, email, hashpass))
+            conn.commit()
+            flask.flash("Registration Successful", "success")
+            return redirect(url_for('login'))
+        elif existing_user:
+            flask.flash("Credentials already taken", "error")
+        return redirect(url_for('register'))
     return render_template('register.html', form=form)
             
 
