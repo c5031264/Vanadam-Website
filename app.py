@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm, CSRFProtect
 
 from wtforms import EmailField, PasswordField, StringField, SubmitField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, Regexp, Length
 import sqlite3, os, hashlib, base64
 from dbconstructor import create_database
 
@@ -43,7 +43,7 @@ class RegisterForm(FlaskForm):
                             validators = [
                                 DataRequired(message="Username is not Valid."),
                                 Length(min=3, max=16, message="Usernames must be between 3 and 16 characters"),
-                                Regexp(r'^[A-Za-z][A-Za-a0-9_]*$', "Usernames must contain letters, spaces or numbers only"),
+                                Regexp(r'^[A-Za-z][A-Za-a0-9_]*$', message="Usernames must contain letters, spaces or numbers only"),
                                 ])
     
     email = EmailField('Email', 
@@ -53,7 +53,7 @@ class RegisterForm(FlaskForm):
     
     password = PasswordField('Password', validators = [DataRequired()])
 
-    passwordConfirm = PasswordField('Password2', validators= [DataRequired()])
+    password2 = PasswordField('Confirm Password', validators= [DataRequired()])
 
     submit = SubmitField('Register')
 
@@ -106,12 +106,12 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm
-    if form.validate_on_submit():
-            flash('Registration successful!', 'success')
-            return redirect(url_for('register'))
-    return render_template('register.html', form=form)
-            
+    form = RegisterForm()
+    if form.validate_on_submit():  # Checks that submitted login form adheres to input validation rules
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+    return render_template('register.html', form=form)          
 
 @app.route('/report', methods=['POST'])
 def report():

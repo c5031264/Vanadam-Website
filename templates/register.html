@@ -8,8 +8,8 @@
 {% block content %}
 <div id="registration" class="row align-content-center justify-content-center mx-auto my-auto p-1 pb-2">
     <div class="col-12">
-    <form method="POST" action="{{ url_for(register) }}">
-        {{ form.hidden_tag(class="form-label") }}
+    <form method="POST" action="{{ url_for('register') }}">
+        {{ form.hidden_tag }}
         <div class="mb-1">
             {{ form.username.label(class="form-label")}}
             {{ form.username(class="form-control") }}
@@ -23,10 +23,14 @@
             {{ form.password(class="form-control") }}
         </div>
         <div class="mb-1">
+            {{ form.password2.label(class="form-label") }}
+            {{ form.password2(class="form-control") }}
+        </div>
+        <div class="mb-1">
             {{ form.submit(class="btn btn-primary")}}
         </div>
     </form>
-    {% with messages = get_flashed_messages(with_categories=true} %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
             <div class="alert alert-{{category}}">{{message}}</div>
@@ -35,6 +39,7 @@
     {% endwith %}
     </div>
 </div>
+{% endblock %}
 
-</div>
+{% block pageScripts %}
 {% endblock %}
