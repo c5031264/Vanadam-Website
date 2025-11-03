@@ -33,7 +33,12 @@ csrf = CSRFProtect(app)
 
 #Construct user validation and registration form classes
 class LoginForm(FlaskForm):
-    username = StringField('Email', validators=[DataRequired()])
+    username = StringField('Username',
+                           validators=[
+                               DataRequired(),
+                               Length(min=3, max=16),
+                               Regexp('^[A-Za-z][A-Za-z0-9_.]*$', )
+                           ])
     password = PasswordField('Password', validators = [DataRequired()])
     submit = SubmitField('Login')
 
@@ -43,7 +48,7 @@ class RegisterForm(FlaskForm):
                             validators = [
                                 DataRequired(message="Username is not Valid."),
                                 Length(min=3, max=16, message="Usernames must be between 3 and 16 characters"),
-                                Regexp(r'^[A-Za-z][A-Za-a0-9_]*$', "Usernames must contain letters, spaces or numbers only"),
+                                Regexp(r'^[A-Za-z][A-Za-a0-9_]*$', message="Usernames must contain letters, spaces or numbers only"),
                                 ])
     
     email = EmailField('Email', 
@@ -108,8 +113,10 @@ def logout():
 def register():
     form = RegisterForm
     if form.validate_on_submit():
-            flash('Registration successful!', 'success')
-            return redirect(url_for('register'))
+        username = form.username.data
+        password = form.password.data
+        flash('Registration successful!', 'success')
+        return redirect(url_for('login'))
     return render_template('register.html', form=form)
             
 
