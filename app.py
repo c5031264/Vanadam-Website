@@ -129,7 +129,6 @@ def login():
         hashed_input = hashlib.sha256(password.encode()).hexdigest()
         stored_password = result['password']
 
-
         if hashed_input == stored_password:
             #Clear session data to remove stale data, then fill in session data
             session.clear()
@@ -137,7 +136,6 @@ def login():
             flash("Login successful!", "success")
 
             return redirect(url_for('index'))
-
         else:
             flash("Incorrect password.", "error")
 
@@ -150,8 +148,6 @@ def logout():
 
     flash("You’ve been logged out.", "info")
     return redirect(url_for('index'))
-    pass
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -184,12 +180,10 @@ def register():
             db.commit()
 
             flash("Registration Successful", "success")
-            # Set session cookie data
             session['username'] = username
 
             return redirect(url_for('index'))
         else:
-            print("4")
             flash("Credentials already taken", "error")
             return redirect(url_for('register'))
 
