@@ -138,6 +138,7 @@ def login():
 
         if result is None:
             print("User not found")
+            flash("Incorrect username or password.", "error")
             return render_template('login.html', form=form)
         hashed_input = hashlib.sha256(password.encode()).hexdigest()
         stored_password = result['password']
