@@ -1,10 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField, SelectMultipleField, SelectField, SubmitField, IntegerField, widgets
+from wtforms.fields.datetime import DateField
 from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo, Optional
 
 # Class Construction
 # ===================
-# Construct user validation and registration form classes
+# Construct search/filter, user validation and registration form classes
 class LoginForm(FlaskForm):
     username = StringField('Username',
                            validators=[
@@ -55,17 +56,17 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Register')
 
-
+#I assume there will be some sort of issue with wtfforms datefield and sqlite as there is no date datatype but need
+#to test this once we have hands on some data?
 class SearchForm(FlaskForm):
     # Posts section
-    date = StringField('Date', validators=[Optional()])
+    date = DateField('Date', validators=[Optional()])
+    date_selector = SelectField('Date Selector',choices=[('Before','Before'),('After','After'), ('On','On')])
     tags = StringField('Tags', validators=[Optional()])
     original_poster = StringField('Original Poster', validators=[Optional()])
 
     # Videos section
     vid_type = StringField('Video Type', validators=[Optional()])
-
-    # Games multi-select (checkboxes)
     games = SelectMultipleField(
         'Game(s)',
         choices=[
@@ -87,7 +88,6 @@ class SearchForm(FlaskForm):
         validators=[Optional()]
     )
 
-    # Maps multi-select
     maps = SelectMultipleField(
         'Maps',
         choices=[
@@ -109,7 +109,6 @@ class SearchForm(FlaskForm):
         validators=[Optional()]
     )
 
-    # Game mode select
     gamemode = SelectField(
         'Game Mode',
         choices=[

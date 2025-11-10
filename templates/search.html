@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Database Search</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -75,87 +75,28 @@
 <body>
     <div class="search-container">
         <h1>Search Database</h1>
-        <form>
-            <!-- General Post Search -->
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
             <div class="section">
                 <h2>Posts</h2>
-                <label for="date">Date</label>
-                <input type="text" id="date" name="date" placeholder="YYYY-MM-DD or partial date">
-
-                <label for="tags">Tags</label>
-                <input type="text" id="tags" name="tags" placeholder="Comma-separated tags">
-
-                <label for="originalPoster">Original Poster</label>
-                <input type="text" id="originalPoster" name="originalPoster" placeholder="Enter username">
+                {{ form.date.label }} {{ form.date() }}
+                {{ form.date_selector.label }} {{ form.date_selector() }}
+                {{ form.tags.label }} {{ form.tags() }}
+                {{ form.original_poster.label }} {{ form.original_poster() }}
             </div>
 
-            <!-- Videos Fields -->
             <div class="section">
                 <h2>Videos</h2>
-                
-                <label for="vidType">Video Type</label>
-                <input type="text" id="vidType" name="vidType" placeholder="Enter video type">
-
-                <details>
-                    <summary style="font-weight: bold;">Game(s)</summary>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="game" value="Halo: Combat Evolved"> Halo: Combat Evolved (2001)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo 2"> Halo 2 (2004)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo 3"> Halo 3 (2007)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo Wars"> Halo Wars (2009)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo 3: ODST"> Halo 3: ODST (2009)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo: Reach"> Halo: Reach (2010)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo 4"> Halo 4 (2012)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo: Spartan Assault"> Halo: Spartan Assault (2013)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo: Spartan Strike"> Halo: Spartan Strike (2015)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo 5: Guardians"> Halo 5: Guardians (2015)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo Wars 2"> Halo Wars 2 (2017)</label><br>
-                        <label><input type="checkbox" name="game" value="Halo Infinite"> Halo Infinite (2021)</label>
-                    </div>
-                </details>
-
-                <details>
-                    <summary style="font-weight: bold;">Select Maps</summary>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="maps" value="Aquarius"> Aquarius</label><br>
-                        <label><input type="checkbox" name="maps" value="Empyrean"> Empyrean</label><br>
-                        <label><input type="checkbox" name="maps" value="Forbidden"> Forbidden</label><br>
-                        <label><input type="checkbox" name="maps" value="Fortress"> Fortress</label><br>
-                        <label><input type="checkbox" name="maps" value="Lattice"> Lattice</label><br>
-                        <label><input type="checkbox" name="maps" value="Live Fire"> Live Fire</label><br>
-                        <label><input type="checkbox" name="maps" value="Origin"> Origin</label><br>
-                        <label><input type="checkbox" name="maps" value="Recharge"> Recharge</label><br>
-                        <label><input type="checkbox" name="maps" value="Serenity"> Serenity</label><br>
-                        <label><input type="checkbox" name="maps" value="Solitude"> Solitude</label><br>
-                        <label><input type="checkbox" name="maps" value="Streets"> Streets</label><br>
-                        <label><input type="checkbox" name="maps" value="All Maps"> All Maps</label>
-                    </div>
-                </details>
-
-                <label for="gamemode">Game Mode</label>
-                <select id="gamemode" name="gamemode">
-                    <option value="">-- Select a game mode --</option>
-                    <option value="Capture the Flag">Capture the Flag</option>
-                    <option value="Slayer">Slayer</option>
-                    <option value="Oddball">Oddball</option>
-                    <option value="Arena">Arena</option>
-                    <option value="Strongholds">Strongholds</option>
-                    <option value="Fiesta">Fiesta</option>
-                    <option value="Juggernaut">Juggernaut</option>
-                    <option value="King of the Hill">King of the Hill</option>
-                    <option value="Stockpile">Stockpile</option>
-                    <option value="Assault">Assault</option>
-                    <option value="Domination">Domination</option>
-                </select>
-
-                <label for="minmmr">Min MMR</label>
-                <input type="number" id="minmmr" name="minmmr" placeholder="Enter MMR">
-
-                <label for="maxmmr">Max MMR</label>
-                <input type="number" id="maxmmr" name="maxmmr" placeholder="Enter MMR">
+                {{ form.vid_type.label }} {{ form.vid_type() }}
+                {{ form.games.label }} {{ form.games() }}
+                {{ form.maps.label }} {{ form.maps() }}
+                {{ form.gamemode.label }} {{ form.gamemode() }}
+                {{ form.min_mmr.label }} {{ form.min_mmr() }}
+                {{ form.max_mmr.label }} {{ form.max_mmr() }}
             </div>
 
-          <button type="submit">Search</button>
+            {{ form.submit() }}
         </form>
     </div>
 </body>

@@ -2,6 +2,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, g
 from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm, CSRFProtect
+
+import dbconstructor
 from flask_session import Session
 
 from wtforms import EmailField, PasswordField, StringField, SelectMultipleField, SelectField, SubmitField, IntegerField, widgets
@@ -29,6 +31,9 @@ Session(app)
 #hash object
 hash = hashlib.sha256()
 
+dbpath = "database.db"
+if not os.path.exists(dbpath):
+    dbconstructor.create_database()
 
 #Get DB instance per request, g is a flask object, which stores stuff for the lifetime of a request
 #Prevents the connection from being started from one CPU thread and accessed in another, raising an error
@@ -36,7 +41,7 @@ def get_database():
     if 'db' not in g:
         dbpath = "database.db"
         if not os.path.exists(dbpath):
-            create_database()
+            dbconstructor.create_database()
 
         g.db = sqlite3.connect("database.db")
         g.db.row_factory = sqlite3.Row
@@ -80,7 +85,7 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        query = "SELECT * FROM users WHERE username = ?"
+        query = "SELECT * FROM Users WHERE username = ?"
         cur.execute(query, (username,))
         result = cur.fetchone()
 
@@ -135,14 +140,14 @@ def register():
             flash("Passwords don't match!", "error")
             return render_template('register.html', form=form)
 
-        query = "SELECT * FROM users WHERE username = ? OR email = ?"
+        query = "SELECT * FROM Users WHERE username = ? OR email = ?"
         cur.execute(query, (username, email))
         existing_user = cur.fetchone()
 
         if existing_user is None:
             # Hash password and insert new user record
             hashpass = hashlib.sha256(password.encode()).hexdigest()
-            cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            cur.execute("INSERT INTO Users (username, email, password) VALUES (?, ?, ?)",
                         (username, email, hashpass))
             db.commit()
 
@@ -206,20 +211,35 @@ def report():
 def search():
     form = SearchForm()
     if form.validate_on_submit():
-        # Extract into Python variables
+        # Extract form data variables
+        #General Filters
         date = form.date.data
-        tags = form.tags.data
+        if date is None:
+            #date=todaysdate
+            pass
+        date_selector = form.date_selector.data
+
+        tags = form.tags.data #Array of tags
+        #Blog filters
         original_poster = form.original_poster.data
+        #Video Filters
         vid_type = form.vid_type.data
-        selected_games = form.games.data  # List of selected games
-        selected_maps = form.maps.data  # List of selected maps
+        selected_games = form.games.data #Array of games
+        selected_maps = form.maps.data #Array of maps
         gamemode = form.gamemode.data
         min_mmr = form.min_mmr.data
+        if min_mmr is None:
+            min_mmr = 0
         max_mmr = form.max_mmr.data
+        if max_mmr is None:
+            max_mmr = 9999
 
         # Print for debugging
         print("Date:", date)
+        print("Date Selector:", date_selector)
+
         print("Tags:", tags)
+
         print("Original Poster:", original_poster)
         print("Video Type:", vid_type)
         print("Selected Games:", selected_games)
@@ -227,6 +247,32 @@ def search():
         print("Game Mode:", gamemode)
         print("Min MMR:", min_mmr)
         print("Max MMR:", max_mmr)
+
+        db = get_database()
+        cur = db.cursor()
+
+        #SQL
+        query = ("")
+        params = []
+        if date_selector == 'On':
+            query += ("SELECT * FROM Posts WHERE date = ?")
+            params.append(date)
+        elif date_selector == 'Before':
+            query += ("SELECT * FROM Posts WHERE date < ?")
+            params.append(date)
+        elif date_selector == 'After':
+            query += ("SELECT * FROM Posts WHERE date > ?")
+            params.append(date)
+        print(query)
+
+        if tags is not None:
+            query += ("AND tags = ?")
+            params.append(tags)
+
+        result = cur.fetchall()
+
+
+
     return render_template('search.html', form=form)
 
 @app.route('/videos/<videoID>', methods=['GET'])
