@@ -217,7 +217,7 @@ def search():
         if date is None:
             #date=todaysdate
             pass
-        date_selector = form.date_selector.data
+        date_selector = form.date_selector.data #Determines wether to search for posts before, after or on given date
 
         tags = form.tags.data #Array of tags
         #Blog filters
