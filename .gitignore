@@ -8,4 +8,4 @@
 flask_session/*
 __pycache__/*
 /.idea
-core.py
+Keys.py

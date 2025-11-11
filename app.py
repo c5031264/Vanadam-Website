@@ -21,7 +21,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev_key_for_testing_only")
 app.config.from_pyfile("config.py")
 
 # temp folder for storing session files (make SQL?)
-SESSION_DIR = './flask_sessions'
+SESSION_DIR = './flask_session'
 os.makedirs(SESSION_DIR, exist_ok=True)
 
 #cross site protection
